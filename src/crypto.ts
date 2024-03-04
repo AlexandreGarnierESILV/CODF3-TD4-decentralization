@@ -1,4 +1,5 @@
 import { webcrypto } from "crypto";
+const { subtle } = webcrypto;
 
 // #############
 // ### Utils ###
@@ -29,16 +30,28 @@ export async function generateRsaKeyPair(): Promise<GenerateRsaKeyPair> {
   //      the public key should be used for encryption and the private key for decryption. Make sure the
   //      keys are extractable.
 
+  return await subtle.generateKey({
+    name: 'RSASSA-PKCS1-v1_5',
+    modulusLength: 2048,
+    publicExponent: new Uint8Array([1, 0, 1]),
+    hash: 'SHA-256',
+  }, true, ['encrypt', 'decrypt']);
+
+  //return { publicKey, privateKey }; 
   // remove this
-  return { publicKey: {} as any, privateKey: {} as any };
+  // return { publicKey: {} as any, privateKey: {} as any };
 }
 
 // Export a crypto public key to a base64 string format
 export async function exportPubKey(key: webcrypto.CryptoKey): Promise<string> {
   // TODO implement this function to return a base64 string version of a public key
 
+  return arrayBufferToBase64(key)
+
+  //return btoa(key.toString()) // à vérif
+
   // remove this
-  return "";
+  //return "";
 }
 
 // Export a crypto private key to a base64 string format
@@ -46,9 +59,10 @@ export async function exportPrvKey(
   key: webcrypto.CryptoKey | null
 ): Promise<string | null> {
   // TODO implement this function to return a base64 string version of a private key
-
+  if (key == null) { return null; }
+  return btoa(key.toString())
   // remove this
-  return "";
+  //return "";
 }
 
 // Import a base64 string public key to its native format
@@ -56,9 +70,9 @@ export async function importPubKey(
   strKey: string
 ): Promise<webcrypto.CryptoKey> {
   // TODO implement this function to go back from the result of the exportPubKey function to it's native crypto key object
-
+  return atob(strKey)
   // remove this
-  return {} as any;
+  //return {} as any;
 }
 
 // Import a base64 string private key to its native format
