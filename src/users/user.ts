@@ -12,10 +12,27 @@ export async function user(userId: number) {
   _user.use(express.json());
   _user.use(bodyParser.json());
 
+  let LRMessage: string | null = null;
+  let LSMessage: string | null = null;
+
   // TODO implement the status route
   _user.get("/status", (req, res) => {
     res.send('live')
   });
+  
+  _user.get("/getLastReceivedMessage", (req, res) =>{
+    LRMessage = req.query.message as string;
+    res.json({
+      result: LRMessage
+    })
+  })
+
+  _user.get("/getLastSentMessage", (req, res) =>{
+    LSMessage = req.query.message as string;
+    res.json({
+      result: LSMessage
+    })
+  })
 
   const server = _user.listen(BASE_USER_PORT + userId, () => {
     console.log(
